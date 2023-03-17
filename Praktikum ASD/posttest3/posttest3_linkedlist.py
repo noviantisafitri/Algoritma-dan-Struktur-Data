@@ -76,10 +76,13 @@ class History:
                 os.system('cls')
                 print(">",n.data,"<", "berhasil dihapus\n")
                 self.display()
+                
+        history_hapus.append(n.data)
 
     def delete_all(self): #menghapus semua data/node
         while(self.head != None):
             n = self.head
+            history_hapus.append(n.data)
             self.head = self.head.next
             n = None
         print("Sedang menghapus semua history....")
@@ -89,71 +92,116 @@ class History:
 
     def back (self): 
         while True :
-            b = input(">>> Tekan enter untuk kembali ke menu awal : ")
+            b = input(">>> Tekan enter untuk kembali ke menu sebelumnya : ")
             if b == "":
                 os.system('cls')
                 break
 
-doubly = History()#object 
-while True:
-    try :
-        os.system('cls')
-        pilih = int(input("""
-        -------------------------------------
-            1. Add
-            2. Read
-            3. Delete
-            4. Exit
-        -------------------------------------
-            Masukan pilihan anda : """))
+    def history_add(self):
+        tabel= PrettyTable(['No','History'])
+        tabel.title = "History add" 
+        no = 1
+        for i in range(len(history_tambah)) :
+            tabel.add_row([no, history_tambah[i]])
+            no += 1
+                
+        print(tabel) 
+        print("\n")
+
+    def history_delete(self):
+        tabel= PrettyTable(['No','History'])
+        tabel.title = "History delete" 
+        no = 1
+        for i in range(len(history_hapus)) :
+            tabel.add_row([no, history_hapus[i]])
+            no += 1
+                
+        print(tabel) 
+        print("\n")
         
-        if pilih == 1:
-            add = "y"
-            while add == "y":
-                os.system('cls')
-                x = str(input("\nMasukan data : "))
-                os.system('cls')
-                doubly.add(x)
+history_tambah = [] #menampung semua data yang ditambah    
+history_hapus = [] #menampung semua data yang dihapus
 
-                add = str(input("Apakah anda ingin menambahkan data lagi? (y/n) : "))
-
-        elif pilih == 2:
+doubly = History()#object 
+while True :
+    os.system('cls')
+    pilih = int(input("""
+    -------------------------------------
+        1. Add
+        2. Read
+        3. Delete
+        4. History
+        5. Exit
+    -------------------------------------
+        Masukan pilihan anda : """))
+    
+    if pilih == 1:
+        add = "y"
+        while add == "y":
             os.system('cls')
-            print("Sedang menampilkan history....")
-            time.sleep(2)
+            x = str(input("\nMasukan data : "))
             os.system('cls')
-            doubly.display()
-            doubly.back()
+            doubly.add(x)
+            history_tambah.append(x)
 
-        elif pilih == 3:
-            while True :
+            add = str(input("Apakah anda ingin menambahkan data lagi? (y/n) : "))
+
+    elif pilih == 2:
+        os.system('cls')
+        print("Sedang menampilkan history....")
+        time.sleep(2)
+        os.system('cls')
+        doubly.display()
+        doubly.back()
+
+    elif pilih == 3:
+        os.system('cls')
+        while True :
+            hps = int(input("""
+                        Pilih metode hapus history
+                    -------------------------------------
+                        1. Hapus berdasarkan nomor
+                        2. Hapus semua history
+                        3. Back
+                    -------------------------------------
+                        Masukan pilihan anda : """))
+            if hps == 1:
                 os.system('cls')
-                hps = int(input("""
-                            Pilih metode hapus history
-                        ------------------------------------
-                            1. Hapus berdasarkan nomor
-                            2. Hapus semua history
-                        ------------------------------------
-                            Masukan pilihan anda : """))
-                if hps == 1:
-                    remove = "y"
-                    while remove == "y":
-                        os.system('cls')
-                        doubly.display()
-                        x = int(input("Masukan no history yg ingin dihapus : "))
-                        os.system('cls')
-                        doubly.delete(x)
-                        remove = str(input("Apakah anda ingin menghapus history lagi? (y/n) : "))
-                    break
-                elif hps == 2:
-                    os.system('cls')
-                    doubly.delete_all()
-                    doubly.back()
-                    break
-                    
-        elif pilih == 4:
-            os.system('cls')
-            print("Program telah selesai")
-            break
-    except:
-        print("Perhatikan Inputan")
+                doubly.display()
+                x = int(input("Masukan history yg ingin dihapus : "))
+                os.system('cls')
+                doubly.delete(x)
+                doubly.back()
+            elif hps == 2:
+                os.system('cls')
+                doubly.delete_all()
+                doubly.back()
+            elif hps == 3:
+                break
+
+    elif pilih == 4:
+        os.system('cls')
+        while True :
+            his = int(input("""
+                                Lihat History
+                    -------------------------------------
+                        1. History Add
+                        2. History Delete
+                        3. Back
+                    -------------------------------------
+                        Masukan pilihan anda : """))
+            if his == 1:
+                os.system('cls')
+                doubly.history_add()
+                doubly.back()
+            elif his == 2:
+                os.system('cls')
+                doubly.history_delete()
+                doubly.back()
+            elif his == 3:
+                break
+            
+    elif pilih == 5:
+        os.system('cls')
+        print("Program telah selesai")
+        break       

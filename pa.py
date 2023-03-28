@@ -3,10 +3,14 @@ import os
 import time
 import random
 from datetime import datetime
+# from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
+# load_dotenv(find_dotenv())
 os.system('cls')
 
-client = MongoClient("mongodb+srv://noviantis112:21november@cluster1.nsfjyfw.mongodb.net/?retryWrites=true&w=majority")
+connection_string = "mongodb+srv://noviantis112:21november@cluster1.nsfjyfw.mongodb.net/?retryWrites=true&w=majority"
+
+client = MongoClient(connection_string)
 
 akun = client.akun #database akun 
 akun_collection = akun.akun_collection
@@ -14,7 +18,22 @@ akun_collection = akun.akun_collection
 data = client.data #database peminjaman ruang
 data_collection = data.data_collection
 
-class Account : #akun mahasiswa
+
+class Ruang: #Node untuk menyimpan data peminjaman ruang
+    def __init__(self, data):
+        self.ref = None
+        self.data = {"kode" : data[0],
+                    "nim"  : data[1],
+                    "nama" : data[2],
+                    "prodi" : data[3],
+                    "mk" : data[4],
+                    "keperluan" : data[5],
+                    "tanggal p" : data[6],
+                    "tanggal s" : data[7],
+                    "status" : data[8],
+                    "ket" : data[9]}      
+
+class account : #akun mahasiswa
     def __init__(self):
         self.nama = []
         self.nim = []
@@ -24,31 +43,32 @@ class Account : #akun mahasiswa
         self.akun_nim = []
 
     def login_staff(self):
+        # staff = {
+        #     "nama" : "Achmad",
+        #     "nip" : "202203272023",
+        #     "jk" : "Laki-laki",
+        #     "jabatan" : "staff",
+        #     "password" : "2023"
+        # }
+        # akun_collection.insert_one(staff)
         nip = str(input("Masukan NIP : "))
         staff_find = akun_collection.find_one({"nip" : nip})
         if staff_find:
             pasw = str(input("Masukan Password : "))
-            nip = staff_find.get("nip")
             nama = staff_find.get("nama")
-            jb = staff_find.get("jabatan")
-            jk = staff_find.get("jk")
             pas = staff_find.get("password")
             if pasw == pas:
                 print("Halo", nama)
+                l1.main()
             else :
                 print("Password anda salah")
 
-        global profil_staff
-        profil_staff = {"nip" : nip,"nama" : nama, "jabatan" : jb, "jk" : jk}
-
     def profil_staf(self):
-        profil = PrettyTable(["NIP", "Nama", "Jabatan", "Jenis Kelamin"])
-        profil.title = "Profil Mahasiswa"
-        profil.add_row([profil_staff["nip"], profil_staff["nama"], profil_staff["jabatan"], profil_staff["jk"]])
-        print(profil)
+        pass
 
     def registrasi(self):
         nim = str(input("Masukan nim : "))
+
         nim_find = akun_collection.find_one({"nim" : nim})
         if nim_find:
             print("Akun telah terdaftar, silahkan login")
@@ -81,6 +101,13 @@ class Account : #akun mahasiswa
             print("Registrasi berhasil")
 
     def login(self):
+        global prof
+        prof = {"nim" : "",
+                "nama" : "",
+                "prodi" : "",
+                "jk" : "",
+                "password" : ""}
+        
         nim = str(input("Masukan nim : "))
         password = str(input("Masukan Password : "))
 
@@ -92,57 +119,67 @@ class Account : #akun mahasiswa
             prodi_find = nim_find.get("prodi")
             jk_find = nim_find.get("jk")
             password_find = nim_find.get("password")
+            prof["nim"] = nim_findd
+            prof["nama"] = nama_find
+            prof["prodi"] = prodi_find
+            prof["jk"] = jk_find
+            prof["password"] = password_find
+
             if password == password_find:
                 print("login berhasil")
                 print("Hallo", prof["nama"])
+                l1.main_user()
             else :
                 print("""
                 >> Password salah
                 >> Silahkan coba lagi""")
                 time.sleep(3)
+
         else :
             print("Nim tidak ditemukan") 
 
-        global prof
-        prof = {"nim" : nim_findd,
-                "nama" : nama_find,
-                "prodi" : prodi_find,
-                "jk" : jk_find,
-                "password" : password_find}
-
     def profil(self):
-        profil = PrettyTable(["NIM", "Nama", "Program Studi", "Jenis Kelamin"])
-        profil.title = "Profil Mahasiswa"
-        profil.add_row([prof["nim"], prof["nama"], prof["prodi"], prof["jk"]])
-        print(profil)
+        p = PrettyTable(["NIM", "Nama", "Program Studi", "Jenis Kelamin"])
+        p.title = "Profil Mahasiswa"
+        p.add_row([prof["nim"], prof["nama"], prof["prodi"], prof["jk"]])
+        print(p)
 
-class Ruang: #Node untuk menyimpan data peminjaman ruang
-    def __init__(self, data):
-        self.ref = None
-        self.data = {"kode" : data[0],
-                    "nim"  : data[1],
-                    "nama" : data[2],
-                    "prodi" : data[3],
-                    "mk" : data[4],
-                    "keperluan" : data[5],
-                    "tanggal p" : data[6],
-                    "tanggal s" : data[7],
-                    "status" : data[8],
-                    "ket" : data[9]} 
-        
-class Admin :
+
+class LinkedList():
         def __init__(self):
             self.head = None
+        
+        def add_peminjaman (self): #create peminjaman dari user
 
-        def add (self, data): #menambahkan data ke dalam node
-            new_node = Ruang(data)
-            if self.head is None:
-                self.head = new_node
-            else:
-                n = self.head
-                while n.ref is not None:
-                    n = n.ref
-                n.ref = new_node
+            # cari_kelas = random.choice(data_kelas["kode"])
+            # if cari_kelas :
+            #     data_collection.update_one({"kode" : cari_kelas }, {"$set" : {"status" : data["ket"]}})
+
+            kode = "000"
+            mk = str(input("Mata kuliah : "))
+            keperluan = str(input("Keperluan : "))
+            # print("Tanggal peminjaman")
+            tanggal_p = datetime(2023,3,28,17,30)#str(input("Tanggal peminjaman : "))
+            tanggal_selesai = datetime(2023,3,28,18,20) #str(input("Tanggal Selesai : "))
+            nim = prof["nim"]
+            nama = prof["nama"]
+            prodi = prof["prodi"]
+            status = "Pending"
+
+            data = {"kode" : kode,
+                    "nim" : nim,
+                    "nama" : nama,
+                    "prodi" : prodi,
+                    "mk" : mk,
+                    "keperluan" : keperluan,
+                    "tanggal p" : tanggal_p,
+                    "tanggal s" : tanggal_selesai,
+                    "status" : status,
+                    "ket" : "digunakan"}
+            a = data_collection.insert_one(data).inserted_id
+            print("data berhasil ditambahkan")
+            
+            self.refresh()
 
         def add_database(self): #create peminjaman dari admin
             self.refresh()
@@ -152,8 +189,8 @@ class Admin :
             prodi = str(input(" Program Studi : "))
             mk = str(input(" Mata kuliah : "))
             keperluan = str(input(" Keperluan : "))
-            tanggal_p = datetime(2023,3,28,17,30)
-            tanggal_selesai = datetime(2023,3,28,19,20)
+            tanggal_p = datetime(2023,3,28,17,30)#str(input("Tanggal peminjaman : ")) 
+            tanggal_selesai = datetime(2023,3,28,19,20)#str(input("Tanggal Selesai : "))
             status = str(input(" Status : "))
             ket = str(input("keterangan : "))
           
@@ -171,6 +208,29 @@ class Admin :
             print("\nData berhasil ditambahkan")
             self.refresh()
 
+        def refresh(self): #mensinkronkan data dari database dan node
+            while(self.head != None):
+                n = self.head
+                self.head = self.head.ref
+                n = None
+            self.add_data()
+            self.update_data()
+        
+        def display(self): #menampilkan data dalam node
+            tabel= PrettyTable(['No','Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Status', 'Tanggal Pinjam', 'Tanggal Selesai', 'Keterangan'])
+            no = 1
+            if self.head is None :
+                print("Data tidak ditemukan")
+            else :
+                n = self.head
+                while n is not None:
+                    tabel.add_row([no, n.data["kode"],n.data["nim"], n.data["nama"], n.data["prodi"], n.data["mk"],n.data["keperluan"], n.data["status"], n.data["tanggal p"], n.data["tanggal s"], n.data["ket"]])
+                    no += 1
+                    n = n.ref
+                            
+                print(tabel) 
+                print("\n")
+                       
         def add_data (self): #membaca data dari database dan menambahkan kedalam node
             tambah = data_collection.find()
             for i in tambah:
@@ -188,29 +248,15 @@ class Admin :
             
                 self.add(data)
        
-        def refresh(self): #mensinkronkan data dari database dan node
-            while(self.head != None):
+        def add (self, data): #menambahkan data ke dalam node
+            new_node = Ruang(data)
+            if self.head is None:
+                self.head = new_node
+            else:
                 n = self.head
-                self.head = self.head.ref
-                n = None
-            self.add_data()
-            self.update_data()
-        
-        def display(self): #menampilkan data dalam node
-            tabel= PrettyTable(['No','Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Status', 'Tanggal Pinjam', 'Tanggal Selesai', 'Keterangan'])
-            no = 1
-            if self.head is None :
-                print("Data tidak ditemukan")
-            else :
-                n = self.head
-                while n is not None:
-                    tabel.add_row([no, n.data["kode"],n.data["nim"], n.data["nama"], n.data["prodi"], n.data["mk"],n.data["keperluan"], 
-                                   n.data["status"], n.data["tanggal p"], n.data["tanggal s"], n.data["ket"]])
-                    no += 1
+                while n.ref is not None:
                     n = n.ref
-                            
-                print(tabel) 
-                print("\n")
+                n.ref = new_node
 
         def update_data (self):
             t_now = datetime.now()
@@ -241,67 +287,18 @@ class Admin :
             data_collection.delete_one({"kode" : d })
             self.refresh()
 
-        def kelas_kosong (self):
-            global data_kelas
-            data_kelas = {"kode" : [], "ket" : []}
-           
+        def sort(self): #sort data di database
+            self.display()
+            a = data_collection.find().sort("kode")
+            for x in a:
+                print(x)
 
-            tambah = data_collection.find({"ket" : "kosong"})
-            for i in tambah:
-                
-                data_kelas["kode"].append(i["kode"])
-                data_kelas["ket"].append(i["ket"])
-
-            tabel= PrettyTable(['No','Kode','Keterangan'])
-            no = 1
-            for i in range(len(data_kelas["kode"])):
-
-                tabel.add_row([no,data_kelas['kode'][i],data_kelas['ket'][i]]) 
-                no += 1
-            print(tabel) 
-
-        def main(self): #menjalankan program admin
-            while True:
-                pilih = int(input("""
-
-                                1. CREATE
-                                2. READ
-                                3. UPDATE
-                                4. DELETE
-                                5. DAFTAR KELAS
-                                6. PROFIL
-                                7. EXIT
-                        
-                        Masukan pilihan anda : """))
-
-class Mahasiswa :
-        
-        def add_peminjaman (self): #create peminjaman dari user
-            kode = "000"
-            mk = str(input("Mata kuliah : "))
-            keperluan = str(input("Keperluan : "))
-            # print("Tanggal peminjaman")
-            tanggal_p = datetime(2023,3,28,17,30)
-            tanggal_selesai = datetime(2023,3,28,18,20)
-            nim = prof["nim"]
-            nama = prof["nama"]
-            prodi = prof["prodi"]
-            status = "Pending"
-
-            data = {"kode" : kode,
-                    "nim" : nim,
-                    "nama" : nama,
-                    "prodi" : prodi,
-                    "mk" : mk,
-                    "keperluan" : keperluan,
-                    "tanggal p" : tanggal_p,
-                    "tanggal s" : tanggal_selesai,
-                    "status" : status,
-                    "ket" : "digunakan"}
-            a = data_collection.insert_one(data).inserted_id
-            print("data berhasil ditambahkan")
-            
-            self.refresh()
+        def back (self): 
+            while True :
+                b = input(">>> Tekan enter untuk kembali ke menu sebelumnya : ")
+                if b == "":
+                    os.system('cls')
+                    break
 
         def read_user(self): #tampilan data peminjaman ruang untuk user
             data = {"kode" : [], "nim" : [], "nama" : [], "prodi" : [], "mk" : [],"keperluan" : [], 
@@ -363,6 +360,106 @@ class Mahasiswa :
                         
                         Masukan pilihan anda : """))
                 
-acc = Account()
-adm = Admin()
-mhs = Mahasiswa()
+                if pilih == 1 :
+                    os.system('cls')
+                    self.add_peminjaman()
+                    self.read_user()
+                    self.back()
+                elif pilih == 2:
+                    os.system('cls')
+                    self.read_user()
+                    self.back()
+                elif pilih == 3:
+                    os.system('cls')
+                    self.read_kelas()
+                    self.back()
+                elif pilih == 4:
+                    os.system('cls')
+                    l2.profil()
+                    self.back()
+                elif pilih == 5:
+                    break
+
+        def main(self): #menjalankan program admin
+            while True:
+                pilih = int(input("""
+
+                                1. CREATE
+                                2. READ
+                                3. UPDATE
+                                4. DELETE
+                                5. DAFTAR KELAS
+                                6. PROFIL
+                                7. EXIT
+                        
+                        Masukan pilihan anda : """))
+                
+                if pilih == 1 :
+                    os.system('cls')
+                    self.refresh()
+                    self.display()
+                    self.add_database()
+                    self.display()
+                    self.back()
+                elif pilih == 2:
+                    os.system('cls')
+                    self.refresh()
+                    self.display()
+                    self.back()
+                elif pilih == 3:
+                    os.system('cls')
+                    self.refresh()
+                    self.update()
+                    self.back()
+                elif pilih == 4:
+                    os.system('cls')
+                    self.refresh()
+                    self.delete()
+                    self.back()
+                elif pilih == 5:
+                    os.system('cls')
+                    self.read_kelas()
+                    self.back()
+                elif pilih == 6 :
+                    os.system('cls')
+                    l2.profil()
+                elif pilih == 7:
+                    break
+
+
+
+l1 = LinkedList()
+l2 = account()
+
+# l1.update_data()
+while True:
+    role = int(input("""
+                1. Mahasiswa
+                2. Staff
+                3. EXIT
+                Masukan pilihan anda : """))
+    if role == 1 :
+        while True:
+            os.system('cls')
+            pilih = int(input("""
+                    1. Registrasi Akun
+                    2. Login
+                    3. EXIT
+                    Masukan pilihan anda : """))
+
+            if pilih == 1:
+                os.system('cls')
+                l2.registrasi() 
+            elif pilih == 2:
+                os.system('cls')
+                l2.login()
+            elif pilih == 3:
+                os.system('cls')
+                break
+    elif role == 2:
+        os.system('cls')
+        l2.login_staff()
+    elif role == 3:
+        os.system('cls')
+        print("PROGRAM TELAH SELESAI")
+        break

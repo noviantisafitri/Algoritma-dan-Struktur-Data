@@ -14,13 +14,13 @@ class LinkedList (Database):
             n = None
         self.add_data()
 
-    def add_data(self): #encari data di databse
-        data = self.data_collection.find()
+    def add_data(self): #mencari data di databse
+        data = self.data_collection.find({"ket" : "Digunakan"})
         for i in data:
-            data = [i["no"],i["kode"],i["nim"],i["nama"],i["prodi"],i["mk"],i["keperluan"],i["tanggal p"],i["tanggal s"],i["status"],i["ket"]]
+            data = [i["no"],i["kode"],i["nim"],i["nama"],i["prodi"],i["mk"],i["keperluan"],i["tanggalp"],i["tanggals"],i["status"],i["ket"]]
             self.add(data) #menambahkan data dari database kedalam node
 
-    def add (self, data): #menambahkan data ke dalam node
+    def add(self, data): #menambahkan data ke dalam node
         new_node = Ruang(data)
         if self.head is None:
             self.head = new_node
@@ -28,20 +28,31 @@ class LinkedList (Database):
             n = self.head
             while n.next is not None:
                 n = n.next
-            n.next = new_node
+            n.next = new_node 
 
-    def displayData(self):
+    def displayData(self, data = ""):
+        #menampilkan data dalam node
         self.refresh()
-        tabel= PrettyTable(['No','Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Tanggal Pinjam', 'Tanggal Selesai','Status',  'Keterangan'])
-        if self.head is None :
-            print("Data tidak ditemukan")
-        else :
-            n = self.head
-            while n is not None:
-                tabel.add_row([n.data["no"], n.data["kode"],n.data["nim"], n.data["nama"], n.data["prodi"], n.data["mk"],n.data["keperluan"],
-                               n.data["tanggal p"], n.data["tanggal s"],  n.data["status"], n.data["ket"]])
-                n = n.next     
-            print(tabel) 
+        tabel= PrettyTable(['ID','Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Tanggal Pinjam', 'Tanggal Selesai', 'Status', 'Keterangan'])
+
+        if(data == ""):
+            if self.head is None :
+                print("Data tidak ditemukan")
+            else :
+                n = self.head
+                while n is not None:
+                    
+                    tabel.add_row([n.data["no"], n.data["kode"],n.data["nim"], n.data["nama"], n.data["prodi"], n.data["mk"],n.data["keperluan"],
+                                   n.data["tanggalp"], n.data["tanggals"],  n.data["status"], n.data["ket"]])
+                  
+                    n = n.next
+        else:
+            for i in range(len(data)):
+                temp = []
+                temp.extend(data[i])
+                tabel.add_row(temp)
+                
+        print(tabel)
     
     def fibonacci_search(self, arr, x):
         arr = sorted(arr)
@@ -107,66 +118,46 @@ class LinkedList (Database):
             else:
                 return -1, -1
 
-    def read(self, data = ""):
-        #menampilkan data dalam node
-        tabel= PrettyTable(['ID','Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Tanggal Pinjam', 'Tanggal Selesai', 'Status', 'Keterangan'])
-        # no = 1
-        if(data == ""):
-            if self.head is None :
-                print("Data tidak ditemukan")
-            else :
-                n = self.head
-                while n is not None:
-                    temp = []
-                    temp.extend(n.data)
-                    tabel.add_row(temp)
-                    # no += 1
-                    n = n.next
-        else:
-            for i in range(len(data)):
-                temp = []
-                temp.extend(data[i])
-                tabel.add_row(temp)
-                # no += 1
-        print(tabel)
-        return tabel
 
     def sort_node(self):
         list_nodes = []
-        node = self.head
+        n = self.head
 
-        label = ['Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Status', 'Tanggal Pinjam', 'Tanggal Selesai']
+        label = ['ID','Kode','NIM','Nama']
 
         for i in range(len(label)):
             print('{n}. {lbl}'.format(n = i, lbl = label[i]))
         key = int(input("Pilih salah satu key: "))
-        while node is not None:
-            list_nodes.append(node.data)
-            node = node.next
-        sorted_nodes = self.quick_sort(list_nodes, 0, len(list_nodes), key)
-        return sorted_nodes
+        while n is not None:
+            convert_array = list(n.data.values()) #melakukan convert type data dictionary ke list
+            list_nodes.append(convert_array)
+            n = n.next
+        sort = self.quick_sort(list_nodes, 0, len(list_nodes), key)
+        return sort
 
-    def quick_sort(self, node_list, firsti, lasti, key:int):
-        if lasti <= firsti:
-            return node_list
+    def quick_sort(self, node, first, last, key):
+        
+        if last <= first:
+            return node
                 
-        if firsti == lasti:
-            return node_list
+        if first == last:
+            return node
 
-        part = self.partition(node_list, firsti, lasti, key)
-        self.quick_sort(node_list, firsti, part - 1, key)
-        self.quick_sort(node_list, part, lasti, key)
+        part = self.partition(node, first, last, key)
+        self.quick_sort(node, first, part - 1, key)
+        self.quick_sort(node, part, last, key)
+        
+        return node
+        
 
-        return node_list
+    def partition(self, node, first, last, key):
+        pivot = node[first][key]
+        batas = first + 1
 
-    def partition(self, node_list, firsti, lasti, key:int):
-        pivot = node_list[firsti][key]
-        batas = firsti + 1
-
-        for i in range(firsti+1, lasti):
-            if node_list[i][key] < pivot:
-                node_list[batas], node_list[i] = node_list[i], node_list[batas]
+        for i in range(first+1, last):
+            if node[i][key] < pivot:
+                node[batas], node[i] = node[i], node[batas]
                 batas += 1
 
-        node_list[batas-1], node_list[firsti] = node_list[firsti], node_list[batas-1]
+        node[batas-1], node[first] = node[first], node[batas-1]
         return batas

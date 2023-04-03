@@ -3,24 +3,22 @@ from Model.Database import Database
 from datetime import datetime
 from prettytable import PrettyTable
 
-fileakun = "Menu.py"
-
-with open(fileakun,"w") as write:
-    bp = "buktipeminjaman2.txt"
-
 class User(Database):
     def __init__(self):
         super().__init__()
 
-    def kodeKelas(self):
-        kelas = ["D401", "D402", "D403", "D404", "D405", "D406", "D407", "D408", "C401"]
+    def kodeKelas(self): #kode kelas yang tersedia
+        kelas = ["D401", "D402", "D403", "D404","C401", "C404", "C402", "C403"]
         return kelas
     
-    def readKelasMhs (self, nim):
+    def readKelasMhs (self, nim): #menampilkan data peminjaman ruang pada mahasiswa
+            
             data = {"no" : [],"kode" : [], "nim" : [], "nama" : [], "prodi" : [], "mk" : [],"keperluan" : [], 
-            "status" : [], "tanggal p" : [], "tanggal s" : []}
-            tambah = self.data_collection.find({"nim" : nim})
-            for i in tambah:
+                    "status" : [], "tanggalp" : [], "tanggals" : []}
+            
+            tambah = self.data_collection.find({"nim" : nim})#melakukan pencarian nim 
+
+            for i in tambah: #melakukan perulangan dan mengambil data yang sesuai dengan nim
                 data["no"].append(i["no"])
                 data["kode"].append(i["kode"])
                 data["nim"].append(i["nim"])
@@ -29,34 +27,25 @@ class User(Database):
                 data["mk"].append(i["mk"])
                 data["keperluan"].append(i["keperluan"])
                 data["status"].append(i["status"])
-                data["tanggal p"].append(i["tanggal p"])
-                data["tanggal s"].append(i["tanggal s"])
+                data["tanggalp"].append(i["tanggalp"])
+                data["tanggals"].append(i["tanggals"])
 
             tabel= PrettyTable(['No','Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Status', 'Tanggal Pinjam', 'Tanggal Selesai'])
             for i in range(len(data["kode"])):
                 tabel.add_row([data["no"][i],data["kode"][i], data["nim"][i],data["nama"][i], data["prodi"][i], 
-                               data["mk"][i] ,data["keperluan"][i],data["status"][i], data["tanggal p"][i], data["tanggal s"][i]]) 
+                               data["mk"][i] ,data["keperluan"][i],data["status"][i], data["tanggalp"][i], data["tanggals"][i]]) 
             print(tabel) 
 
-    def updateKelasKosong (self): #jika kelas sudah selesai dilakukan peminjaman maka akan melakukan update secara otomatis
+    def updatePeminjamanKelas(self): #jika kelas sudah selesai dilakukan peminjaman maka akan melakukan update secara otomatis
         date = datetime.now()
-        cek = self.find_all()
+        cek = self.find_all() #melakukan pengecekan pada semua data didatabase
         for i in cek :
-            tanggal_s = i["tanggal s"]
-            cek =  tanggal_s < date
+            tanggal_s = i["tanggals"]
+            cek =  tanggal_s < date #jika waktu selesai peminjaman kurang dari waktu sekarang
             if cek:
-                self.delete_data_tanggal(tanggal_s)
-                # self.update_data({"tanggal s" : tanggal_s}, {"$set" : {"ket" : "kosong"}})
-                # self.update_data({"tanggal s" : tanggal_s}, {"$set" : {"status" : "kosong"}})
-                # self.update_data({"tanggal s" : tanggal_s}, {"$set" : {"nim" : "kosong"}})
-                # self.update_data({"tanggal s" : tanggal_s}, {"$set" : {"nama" : "kosong"}})
-                # self.update_data({"tanggal s" : tanggal_s}, {"$set" : {"prodi" : "kosong"}})
-                # self.update_data({"tanggal s" : tanggal_s}, {"$set" : {"mk" : "kosong"}})
-                # self.update_data({"tanggal s" : tanggal_s}, {"$set" : {"keperluan" : "kosong"}})
-                # self.update_data({"tanggal s" : tanggal_s}, {"$set" : {"tanggal p" : "kosong"}})
-                # self.update_data({"tanggal s" : tanggal_s}, {"$set" : {"tanggal s" : "kosong"}})
+                self.update_data({"tanggals" : tanggal_s}, {"$set" : {"ket" : "Selesai"}}) #mengupdate data peminjaman pada kolom status
                     
-    def readKelasKosong(self):
+    def readKodeKelas(self): #menampilkan semua kode kelas yang tersedia
         tabel= PrettyTable(['No','Kode Kelas'])
         no = 1
         for i in range(len(self.kodeKelas())):
@@ -65,46 +54,23 @@ class User(Database):
             no += 1
         print(tabel) 
 
-    def addPengajuanPeminjaman(self, kode, tanggal_p, tanggal_s):
-        if kode in self.kodeKelas() : #jika kode kelas yang diinputkan berada dalam kode kelas yang tersedia
-            tanggal_pinjam = input("Masukkan tanggal peminjaman (dd/mm/yyyy): ")
-            time = input("Masukkan waktu (hh:mm:ss): ")
-            tanggal_p = datetime.strptime(f"{tanggal_pinjam} {time}", "%d/%m/%Y %H:%M:%S") 
+    def addPengajuanPeminjaman(self, idPeminjaman, nim, kode, nama, prodi, mk, keperluan, tanggal_p, tanggal_s, status):
+        #memasukan data kedalam database
+        self.insert_to_database(idPeminjaman, nim, kode, nama, prodi, mk, keperluan, tanggal_p, tanggal_s, status)
+        print("\nData berhasil ditambahkan")
+    
+    def cekRuangPeminjaman(self,kode, tanggal_p, tanggal_s):
+        #jika tanggal peminjaman melebih tanggal selesai peminjaman user sebelumnya atau 
+        # tanggal selesai peminjaman yang diinputkan kurang dari tanggal peminjaman user sebelumnya maka dapat dilakukan peminjaman
+        if self.find_data(kode).get("ket") == "Digunakan" :
+            if tanggal_p > self.find_data(kode).get("tanggals") or tanggal_s < self.find_data(kode).get("tanggalp"):
+                pass
+            else : 
+                print("Mohon maaf kelas sedang digunakan")
+                return False
+        else :
+            pass
 
-            if datetime.now() > tanggal_p : #mengecek tanggal dan waktu sekarang dengan tanggal dan waktu yang diinputkan
-                print("Mohon masukan tanggal dengan benar") #jika waktu peminjaman yang telah diinputkan telah terlewati, maka tidak bisa dilakukan peminjaman
-            
-            else :
-                tanggal_selesai = input("Masukkan tanggal selesai (dd/mm/yyyy): ")
-                time2 = input("Masukkan waktu (hh:mm:ss): ")
-                tanggal_s = datetime.strptime(f"{tanggal_selesai} {time2}", "%d/%m/%Y %H:%M:%S")
-                #mencari kode kelas didatabase dan jika kode kelas ditemukan
-                if self.find_data(kode) :
-                    #jika tanggal peminjaman melebih tanggal selesai peminjaman user sebelumnya atau 
-                    # tanggal selesai peminjaman yang diinputkan kurang dari tanggal peminjaman user sebelumnya maka dapat dilakukan peminjaman
-                    if self.find_data(kode).get("status") != "kosong" :
-                        if tanggal_p > self.find_data(kode).get("tanggal s") or tanggal_s < self.find_data(kode).get("tanggal p"):
-                            pass
-                        else :
-                            print("Mohon maaf kelas sedang digunakan") 
-                            
-    def data_bukti_peminjaman(self):
-        data =  self.finduser_bp()
+    def data_bukti_peminjaman(self, id): #mencari data user yang status peminjamannya telah diacc oleh staff
+        data = self.finduser_bp(id)
         return data
-
-        # with open (bp,"a")as edit:
-        #                             print("===============================================",file=edit)
-        #                             print("============ BUKTI PEMINJAMAN RUANGAN =========",file=edit)
-        #                             print("===============================================",file=edit)
-        #                             print(f"Kode              : {kode}",file=edit)
-        #                             print("                                               ",file=edit)        
-        #                             print(f"Program Studi     : {prodi}", file=edit)
-        #                             print("                                               ",file=edit) 
-        #                             print(f"Mata Kuliah       : {mk} ",file=edit)
-        #                             print("                                               ",file=edit) 
-        #                             print(f"Tanggal           : {tgl}",file=edit)
-        #                             print("                                               ",file=edit) 
-        #                             print(f"Keperluan Kelas   : {keperluan}",file=edit)
-        #                             print("                                               ",file=edit)
-        #                             print("===============================================",file=edit)   
-        # return data

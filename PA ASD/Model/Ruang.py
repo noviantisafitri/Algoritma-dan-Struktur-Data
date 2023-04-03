@@ -7,8 +7,8 @@ class Ruang: #Node untuk menyimpan data peminjaman ruang
                     "prodi" : data[4],
                     "mk" : data[5],
                     "keperluan" : data[6],
-                    "tanggal p" : data[7],
-                    "tanggal s" : data[8],
+                    "tanggalp" : data[7],
+                    "tanggals" : data[8],
                     "status" : data[9],
                     "ket" : data[10]} 
         # self.data = data

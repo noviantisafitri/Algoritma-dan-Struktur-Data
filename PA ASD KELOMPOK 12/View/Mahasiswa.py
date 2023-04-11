@@ -35,12 +35,14 @@ def registrasiMahasiswa(): #fungsi untuk membuat akun mahasiswa
 def loginMahasiswa(): 
     global nim_mhs
     # try :
-    nim_mhs = str(input("Masukan NIM : "))
-    password = str(input("Masukan Password : "))
+    nim_mhs = str(input("✎ Masukan NIM : "))
+    password = str(input("✎ Masukan Password : "))
     if acc.login(user.find_nim(nim_mhs),password): #melakukan pencarian nim dan password didatabase
         os.system('cls')
+        print("✿   ✿   ✿   ✿   ✿   ✿")
         print("Login berhasil")
         print("Halo",user.find_nim(nim_mhs).get("nama"))
+        print("✿   ✿   ✿   ✿   ✿   ✿")
         time.sleep(3)
         return True #jika user ditemukan
     else :
@@ -72,29 +74,31 @@ def readPeminjaman(): #melihat data peminjaman yang telah dilakukan
 
 def menuMahasiswa():
     print("""
-         MENU MAHASISWA
-
+         ✎ MENU MAHASISWA
+✿   ✿   ✿   ✿   ✿   ✿   ✿   ✿   ✿
     1. CREATE PEMINJAMAN
     2. LIHAT PENGAJUAN PEMINJAMAN
     3. DAFTAR KELAS
     4. SEARCH KELAS
     5. PROFIL
-    6. EXIT\n""")
+    6. EXIT
+✿   ✿   ✿   ✿   ✿   ✿   ✿   ✿   ✿\n""")
 
 def pilihLogin():
     print("""  
-    PILIH LOGIN
-
+    ✎ PILIH LOGIN
+✿   ✿   ✿   ✿   ✿   ✿
     1. LOGIN
     2. REGISTRASI
-    3. EXIT\n""")
+    3. EXIT
+✿   ✿   ✿   ✿   ✿   ✿\n""")
 
 def MenuMahasiswa():
     os.system('cls')
     while True:
         # try :
             pilihLogin()
-            pil = int(input("Masukan Pilihan anda : "))
+            pil = int(input("✎ Masukan Pilihan anda : "))
             if pil == 1 :
                 os.system('cls')
                 if loginMahasiswa(): 
@@ -102,7 +106,7 @@ def MenuMahasiswa():
                         # try :
                             os.system('cls')
                             menuMahasiswa()
-                            pilih = int(input("Masukan pilihan anda : "))
+                            pilih = int(input("✎ Masukan pilihan anda : "))
                             if pilih == 1:
                                 os.system('cls')
                                 Staff.addPeminjaman(nim_mhs)
@@ -126,9 +130,9 @@ def MenuMahasiswa():
                             elif pilih == 6:
                                 break
                             else :
-                                print("Pilihan tidak tersedia")
+                                print("✎ Pilihan tidak tersedia")
                         # except :
-                            print("Mohon perhatikan inputan")
+                            print("✎ Mohon perhatikan inputan")
                 else:
                     time.sleep(3)
                     continue
@@ -146,4 +150,4 @@ def MenuMahasiswa():
                 break
 
         # except:
-        #     print("Mohon perhatikan inputan")
+        #     print("✎ Mohon perhatikan inputan")

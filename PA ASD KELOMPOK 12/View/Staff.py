@@ -13,8 +13,8 @@ user = User()
 def loginStaff():
     global nip
     try :
-        nip = str(input("✎ Masukan NIP : "))
-        pasw = str(input("✎ Masukan Password : "))
+        nip = str(input(">>> Masukan NIP : "))
+        pasw = str(input(">>> Masukan Password : "))
         if acc.login(user.find_nip(nip),pasw): #melakukan pencocokan username dan password staff
             os.system('cls')
             print("Login berhasil")
@@ -24,7 +24,7 @@ def loginStaff():
         else :
             return False #jika akun tidak ditemukan
     except :
-        print("✎ Mohon perhatikan inputan")
+        print("\n- Mohon perhatikan inputan")
 
 def profilStaff(): #menampilkan profil staff
     acc.profil_adm(user.find_nip(nip).get("nip"))
@@ -33,25 +33,25 @@ def profilStaff(): #menampilkan profil staff
                                                                   
 def addPeminjaman(nip = ""): #menambahkan data oleh admin
     try :
-        kode = str(input("Kode : ")).capitalize()
+        kode = str(input(">>> Kode : ")).capitalize()
         if kode in user.kodeKelas() : #jika kode kelas yang diinputkan berada dalam daftar kode kelas yang tersedia
-            tanggal_pinjam = input("Masukkan tanggal peminjaman (dd/mm/yyyy): ")
-            time = input("Masukkan waktu (hh:mm:ss): ")
+            tanggal_pinjam = input(">>> Masukkan tanggal peminjaman (dd/mm/yyyy): ")
+            time = input("  > Masukkan waktu (hh:mm:ss): ")
             tanggal_p = datetime.strptime(f"{tanggal_pinjam} {time}", "%d/%m/%Y %H:%M:%S") 
 
             if datetime.now() > tanggal_p : #mengecek tanggal dan waktu sekarang dengan tanggal dan waktu yang diinputkan
-                print("Mohon masukan tanggal dengan benar") #jika waktu peminjaman yang telah diinputkan telah terlewati, 
+                print("\n- Mohon masukan tanggal dengan benar") #jika waktu peminjaman yang telah diinputkan telah terlewati, 
                                                             #maka tidak bisa dilakukan peminjaman
             
             else :
-                tanggal_selesai = input("Masukkan tanggal selesai (dd/mm/yyyy): ")
-                time2 = input("Masukkan waktu (hh:mm:ss): ")
+                tanggal_selesai = input(">>> Masukkan tanggal selesai (dd/mm/yyyy): ")
+                time2 = input("  > Masukkan waktu (hh:mm:ss): ")
                 tanggal_s = datetime.strptime(f"{tanggal_selesai} {time2}", "%d/%m/%Y %H:%M:%S")
                 waktu_p = timedelta(hours=1)
                 jam_p = tanggal_s - tanggal_p
 
                 if tanggal_s < tanggal_p :
-                    print("✎ Peminjaman tidak dapat diproses karena tanggal tidak sesuai")
+                    print("\n- Peminjaman tidak dapat diproses karena tanggal tidak sesuai")
                 #mencari kode kelas didatabase dan jika kode kelas ditemukan
                 else :
                     if jam_p >= waktu_p :
@@ -68,7 +68,7 @@ def addPeminjaman(nip = ""): #menambahkan data oleh admin
                                             Mahasiswa.formPeminjamanMhs(kode, tanggal_p, tanggal_s)
                                             break
                                     else :
-                                        print("✎ Mohon maaf kelas sedang digunakan") #jika waktu peminjaman yang diinputkan bertabrakan dengan peminjaman yang telah ada didatabase     
+                                        print("\n- Mohon maaf kelas sedang digunakan") #jika waktu peminjaman yang diinputkan bertabrakan dengan peminjaman yang telah ada didatabase     
                                 else : 
                                 
                                     if nip == "":
@@ -79,73 +79,82 @@ def addPeminjaman(nip = ""): #menambahkan data oleh admin
                                         break    
                         else :
                             if nip == "":
-                                print("kode kelas baru")
                                 formDataPeminjaman(kode, tanggal_p, tanggal_s)             
                                             #formDataPeminjaman(kode, tanggal_p, tanggal_s) #fungsi untuk melakukan isi data peminjaman
                             else :
                                 Mahasiswa.formPeminjamanMhs(kode, tanggal_p, tanggal_s)
                             # formDataPeminjaman(kode, tanggal_p, tanggal_s) 
                     else : 
-                        print("✎ Waktu minimal peminjaman ruang adalah 1 jam")                  
+                        print("\n- Waktu minimal peminjaman ruang adalah 1 jam")                  
         else :
-            print("✎ Kode kelas tidak ditemukan") #jika kode kelas yang diinputkan tidak ada didalam daftar kode kelas yang tersedia
+            print("\n- Kode kelas tidak ditemukan") #jika kode kelas yang diinputkan tidak ada didalam daftar kode kelas yang tersedia
     
     except :
-        print("✎ Mohon perhatikan inputan")
+        print("\n- Mohon masukan inputan dengan benar")
 
 def formDataPeminjaman(kode, tanggal_p, tanggal_s): #form data peminjaman
     try :
-        nim = str(input("NIM : "))
+        nim = str(input(">>> NIM : "))
         if user.find_nim(nim): #jika nim mahasiswa ditemukan/telah terdaftar maka akan mencari dan mengambil data nama dan prodi 
             nama = user.find_nim(nim).get("nama")
             prodi = user.find_nim(nim).get("prodi")
 
         else : #jika nim belum terdaftar maka akan diminta untuk menginputkan nama dan prodi
-            nama = str(input("Nama : ")).capitalize()
-            prodi = str(input("Program Studi : ")).capitalize()
-            
-        if (nama.isnumeric() and prodi.isnumeric()):
-            print("Input tidak boleh angka")
-        elif (nama =="" and prodi == ""):
-            print("Input tidak boleh kosong")
-        else :
-            mk = str(input("Mata kuliah : ")).capitalize()
-            keperluan = str(input("Keperluan : ")).capitalize()
-            status = "Done" 
-            idP = user.id_peminjaman()
+            while True:
+                nama = str(input(">>> Nama : ")).capitalize()
+                prodi = str(input(">>> Program Studi : ")).capitalize()
+                if 2 < len(nama) < 30 and 2 < len(prodi) < 30:
+                    break
+                else:
+                    print("\n- Panjang karakter nama dan prodi harus diantara 2-30")
 
-            if not(mk.isnumeric() and keperluan.isnumeric()):
-                print("Input tidak boleh angka")
-            elif (mk == "" and keperluan == ""):
-                print("✎ Input tidak boleh kosong")
-            else:
-                user.addPengajuanPeminjaman(idP, nim, kode, nama, prodi, mk, keperluan, tanggal_p, tanggal_s, status)
-                ll.displayData()#menampilkan data  
-                buktiPeminjaman(idP)
+        if nim.isnumeric() and len(nim) == 10:
+            if (nama.isnumeric() or prodi.isnumeric()):
+                print("\n- Input tidak boleh angka")
+            elif (nama =="" or prodi == ""):
+                print("\n- Input tidak boleh kosong")
+            else :
+                mk = str(input(">>> Mata kuliah : ")).capitalize()
+                keperluan = str(input(">>> Keperluan : ")).capitalize()
+
+                if (mk.isnumeric() or keperluan.isnumeric()):
+                    print("\n- Input tidak boleh angka")
+                elif (mk == "" or keperluan == ""):
+                    print("\n- Input tidak boleh kosong")
+                else:
+                    status = "Done" 
+                    idP = user.id_peminjaman()
+                    user.addPengajuanPeminjaman(idP, nim, kode, nama, prodi, mk, keperluan, tanggal_p, tanggal_s, status) 
+                    buktiPeminjaman(idP)
+        else :
+            print("\n- Harap masukan NIM dengan benar")
             
     except :
-        print("✎ Mohon perhatikan inputan")
+        print("\n- Mohon perhatikan inputan")
 
 def updateData(): #melakukan update data didatabase
     try :
         ll.displayData()
-        id = int(input("Masukan ID yang ingin diubah : "))
-        status = str(input("Masukan status : ")).capitalize()
-        user.update_data({"no" : id }, {"$set" : {"status" : status}}) #melakukan update data pada bagian status berdasarkan ID
-    
-        if status == "Done" :
-            buktiPeminjaman(id)
+        id = int(input(">>> Masukan ID yang ingin diubah : "))
+        if id not in user.cari_id(id).get("no"):
+            print("\n- ID tidak ditemukan")
+        else :
+            status = str(input(">>> Masukan status : ")).capitalize()
+            user.update_data({"no" : id }, {"$set" : {"status" : status}}) #melakukan update data pada bagian status berdasarkan ID
+        
+            if status == "Done" :
+                buktiPeminjaman(id)
 
-        ll.displayData()
+            ll.displayData()
     except :
-        print("✎ Mohon perhatikan inputan")
+        print("\n- Mohon perhatikan inputan")
 
 def buktiPeminjaman(id): #
-    kode = user.data_bukti_peminjaman(id).get("kode")
-    prodi = user.data_bukti_peminjaman(id).get("prodi")
-    mk = user.data_bukti_peminjaman(id).get("mk")
-    tgl = user.data_bukti_peminjaman(id).get("tanggals")
-    keperluan = user.data_bukti_peminjaman(id).get("keperluan")
+    kode = user.cari_id(id).get("kode")
+    prodi = user.cari_id(id).get("prodi")
+    mk = user.cari_id(id).get("mk")
+    tgl = user.cari_id(id).get("tanggals")
+    keperluan = user.cari_id(id).get("keperluan")
 
     with open ("buktipeminjaman2.txt","a") as edit:
                             print("===============================================",file=edit)
@@ -167,11 +176,10 @@ def buktiPeminjaman(id): #
 def deleteData(): #mengahpus data didatabase
     try :
         ll.displayData()
-        del_id = int(input("✎ Masukan ID yang ingin dihapus : "))
-        user.delete_data(del_id) #menghapus data berdasarkan ID
-        ll.displayData()
+        del_id = int(input(">>> Masukan ID yang ingin dihapus : "))
+        del_id not in user.delete_data(del_id) #menghapus data berdasarkan ID
     except:
-        print("✎ Mohon perhatikan inputan")
+        print("\n- ID tidak ditemukan")
 
 def readDaftarKelas(): #melihat daftar kelas yang sedang tidak digunakan atau statusnya kosong
     ll.refresh()
@@ -180,35 +188,45 @@ def readDaftarKelas(): #melihat daftar kelas yang sedang tidak digunakan atau st
 #SORT
 
 def sortData():
-    ll.refresh()
-    sort = ll.sort_node()
-    os.system('cls')
-    ll.displayData(sort)
+    try:
+        ll.refresh()
 
-def searchKodeKelas() :
-    temp_data = ll.searchKelas()
-    if temp_data is False:
-        print("✎ Kode kelas tidak ditemukan!")
-    else:
-        ll.hasilSearchKodekelas(temp_data)
+        label = ['ID','Kode Kelas','NIM','Nama']
+
+        for i in range(len(label)):
+            print('{n}. {lbl}'.format(n = i, lbl = label[i]))
+            
+        key = int(input("Pilih salah satu key : "))
+        if key <= 3:
+            sort = ll.sort_node(key)
+            os.system('cls')
+            ll.displayData(sort)
+        else :
+            print("\n- Key tidak tersedia")
+    except:
+        print("\n- Mohon perhatikan inputan")
     
 def searchNimMhs():
-    temp_data = ll.searchNIM()
-    if temp_data == False:
-        print("✎ NIM tidak ditemukan!")
-    else:
-        ll.displayData(temp_data)
+    try:
+        search = input("Masukkan NIM yang ingin dicari : ")
+        temp_data = ll.searchNIM(search)
+        if temp_data == False:
+            print("\n- NIM tidak ditemukan!")
+        else:
+            ll.displayData(temp_data)
+    except:
+        print("\n- Mohon perhatikan inputan")
 
 def back(): #fungsi untuk kembali kemenu sebelumnya
     while True :
-        b = input(">>> Tekan enter untuk kembali ke menu sebelumnya : ")
+        b = input("\n>>> Tekan enter untuk kembali ke menu sebelumnya <<<")
         if b == "":
             os.system('cls')
             break
 
 def menuStaff():
     print("""    
-    ✎ MENU Staff
+        MENU STAFF
 ✿   ✿   ✿   ✿   ✿   ✿
     1. CREATE
     2. READ
@@ -222,12 +240,11 @@ def menuStaff():
 ✿   ✿   ✿   ✿   ✿   ✿\n""")
 
 def MenuStaff():
-    while True:
-        try :
-            os.system('cls')
-            if loginStaff():     
-                while True:
-                    os.system('cls')
+        os.system('cls')
+        if loginStaff():     
+            while True:
+                os.system('cls')
+                try:
                     menuStaff()
                     pilih = int(input("✎ Masukan pilihan anda : "))
                     if pilih == 1:
@@ -265,9 +282,8 @@ def MenuStaff():
                         back()
                     elif pilih == 9:
                         break
-            else :
-                time.sleep(3)
-                break
-
-        except:
-            print("✎ Mohon perhatikan inputan")
+                except:
+                    print("\n- Mohon perhatikan inputan")
+        else :
+            time.sleep(3)
+            os.system('cls')

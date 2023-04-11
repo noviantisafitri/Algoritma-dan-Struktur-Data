@@ -35,7 +35,7 @@ class LinkedList (Database):
     def displayData(self, data = ""):
         #menampilkan data dalam node
         self.refresh()
-        tabel= PrettyTable(['ID','Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Tanggal Pinjam', 'Tanggal Selesai', 'Status', 'Keterangan'])
+        tabel= PrettyTable(['ID','Kelas','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Tanggal Pinjam', 'Tanggal Selesai', 'Status', 'Keterangan'])
 
         if(data == ""):
             if self.head is None :
@@ -57,7 +57,7 @@ class LinkedList (Database):
         print(tabel)
 
     def hasilSearchKodekelas(self, data):
-        tabel= PrettyTable(['ID','Kode','Tanggal Pinjam', 'Tanggal Selesai'])
+        tabel= PrettyTable(['ID','Kelas','Tanggal Pinjam', 'Tanggal Selesai'])
         for i in range(len(data)):
             tabel.add_row([data[i][0], data[i][1], data[i][7], data[i][8]])
         print(tabel)
@@ -126,15 +126,14 @@ class LinkedList (Database):
             else:
                 return -1, -1
 
-    def searchKelas(self):
+    def searchKelas(self, search):
         self.refresh()
         list_nodes = []
         temp_list = []
-        cursor = self.convertArray()
+        cursor = self.convertData()
         for data in cursor:
             list_nodes.append(data["kode"])
             temp_list.append(data)
-        search = input("Masukkan Kode Kelas yang ingin dicari: ").capitalize()
         searching = self.fibonacci_search(list_nodes, search)
         if searching[0] == -1:
             return False
@@ -145,15 +144,14 @@ class LinkedList (Database):
                     list_nodes.append(list(x.values())[0:])
             return list_nodes
 
-    def searchNIM(self):
+    def searchNIM(self, search):
         self.refresh()
         list_nodes = []
         temp_list = []
-        cursor = self.convertArray()
+        cursor = self.convertData()
         for data in cursor:
             list_nodes.append(data["nim"])
             temp_list.append(data)
-        search = input("Masukkan NIM yang ingin dicari: ")
         searching = self.fibonacci_search(list_nodes, search)
         if searching[0] == -1:
             return False
@@ -164,7 +162,7 @@ class LinkedList (Database):
                     list_nodes.append(list(x.values())[0:])
             return list_nodes
         
-    def convertArray(self):
+    def convertData(self):
         if self.head == None:
             return []
         else:
@@ -176,15 +174,10 @@ class LinkedList (Database):
             return result
 
 
-    def sort_node(self):
+    def sort_node(self,key):
         list_nodes = []
         n = self.head
-
-        label = ['ID','Kode','NIM','Nama']
-
-        for i in range(len(label)):
-            print('{n}. {lbl}'.format(n = i, lbl = label[i]))
-        key = int(input("Pilih salah satu key: "))
+            
         while n is not None:
             convert_array = list(n.data.values()) #melakukan convert type data dictionary ke list
             list_nodes.append(convert_array)

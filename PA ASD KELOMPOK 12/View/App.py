@@ -16,12 +16,12 @@ def welcome():
     
 def roleUser():
     print("""
-    PILIH ROLE
-
+    ✎ PILIH ROLE
+✿   ✿   ✿   ✿   ✿   ✿
     1. MAHASISWA
     2. STAFF
-    3. EXIT\n""")
-
+    3. EXIT
+✿   ✿   ✿   ✿   ✿   ✿\n""")
 def mainProgram():
     os.system('cls')
     welcome()

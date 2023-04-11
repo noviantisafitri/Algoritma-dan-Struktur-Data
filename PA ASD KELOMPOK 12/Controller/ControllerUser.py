@@ -36,12 +36,12 @@ class User(Database):
         delete = self.data_collection.delete_one({"no" : id })
         return delete
 
-    def data_bukti_peminjaman(self, id): #mencari data user yang status peminjamannya telah diacc oleh staff
+    def cari_id(self, id): #mencari data user yang status peminjamannya telah diacc oleh staff
         data = self.data_collection.find_one({"no" : id})
         return data
 
     def kodeKelas(self): #kode kelas yang tersedia
-        kelas = ["D401", "D402", "D403", "D404","C401", "C404", "C402", "C403"]
+        kelas = ["C401", "C402", "C403", "C404","D401", "D402", "D403", "D404"]
         return kelas
     
     def readKelasMhs (self, nim): #menampilkan data peminjaman ruang pada mahasiswa
@@ -63,7 +63,7 @@ class User(Database):
                 data["tanggalp"].append(i["tanggalp"])
                 data["tanggals"].append(i["tanggals"])
 
-            tabel= PrettyTable(['No','Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Status', 'Tanggal Pinjam', 'Tanggal Selesai'])
+            tabel= PrettyTable(['No','Kelas','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Status', 'Tanggal Pinjam', 'Tanggal Selesai'])
             for i in range(len(data["kode"])):
                 tabel.add_row([data["no"][i],data["kode"][i], data["nim"][i],data["nama"][i], data["prodi"][i], 
                                data["mk"][i] ,data["keperluan"][i],data["status"][i], data["tanggalp"][i], data["tanggals"][i]]) 

@@ -56,3 +56,4 @@ class Account(Database): #akun
         profil.title = "Profil Staff"
         profil.add_row([self.akun_collection.find_one({"nip" : nip}).get("nip"), self.akun_collection.find_one({"nip" : nip}).get("nama"),self.akun_collection.find_one({"nip" : nip}).get("jk"), self.akun_collection.find_one({"nip" : nip}).get("jabatan")])
         print(profil)
+        

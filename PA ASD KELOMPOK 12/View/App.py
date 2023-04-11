@@ -16,24 +16,33 @@ def welcome():
     
 def roleUser():
     print("""
-    ✎ PILIH ROLE
+       PILIH ROLE
 ✿   ✿   ✿   ✿   ✿   ✿
     1. MAHASISWA
     2. STAFF
     3. EXIT
 ✿   ✿   ✿   ✿   ✿   ✿\n""")
+
 def mainProgram():
     os.system('cls')
     welcome()
     time.sleep(3)
     while True:
-        # try:
+        try:
             os.system('cls')
             roleUser()
-            role = int(input("Masukan pilihan anda : "))
+            role = int(input("✎ Masukan pilihan anda : "))
             if role == 1:
                 Mahasiswa.MenuMahasiswa()
             elif role == 2 :
                 Staff.MenuStaff()
-        # except ValueError:
-        #     print("Mohon perhatikan inputan")
+            elif role == 3 :
+                 os.system('cls')
+                 print("Sedang memproses keluar dari program...")
+                 time.sleep(3)
+                 os.system('cls')
+                 print("--- THANK YOU ---")
+                 break
+                 
+        except:
+            print("\n- Mohon perhatikan inputan")

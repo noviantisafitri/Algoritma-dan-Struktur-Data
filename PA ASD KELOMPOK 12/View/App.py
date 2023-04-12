@@ -23,7 +23,7 @@ def roleUser():
     3. EXIT
 ✿   ✿   ✿   ✿   ✿   ✿\n""")
 
-def mainProgram():
+def mainProgram(): #menjalankan program utama
     os.system('cls')
     welcome()
     time.sleep(3)

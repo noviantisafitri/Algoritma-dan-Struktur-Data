@@ -10,45 +10,50 @@ user = User()
 ll = LinkedList()
 
 def registrasiMahasiswa(): #fungsi untuk membuat akun mahasiswa
-    try : 
-        nim = str(input(">>> Masukan NIM : "))
-        if len(nim) == 10:
-            if acc.cekNim(nim): #melakukan pencarian nim yang telah diinput ke database
-                print("NIM telah terdaftar")
-                return False
-            else : #jika nim tidak ada dalam database maka bisa melakukan registrasi
-                nama = str(input(">>> Masukan Nama : ")).capitalize()
-                prodi = str(input(">>> Masukan Program Studi : ")).capitalize()
-                if 2 < len(nama) < 30 and 2 < len(prodi) < 30:
-                    jeniskelamin = int(input("""
-                    1. Perempuan
-                    2. Laki-laki
-                    Pilih jenis kelamin anda : """))
-                    if jeniskelamin == 1:
-                        jeniskelamin = "Perempuan"
-                    elif jeniskelamin == 2:
-                        jeniskelamin = "Laki-laki"
-                    pasw = str(input("\n>>> Masukan Password : "))
-                    acc.registrasi(nim,nama,prodi,jeniskelamin,pasw) #melakukan proses penambahan data regis ke database
-                    print("Registrasi berhasil")
-                    return True
-                else :
-                    print("\n- Panjang karakter nama dan prodi harus diantara 2-30")
-        else :
-            print("\n- NIM harus terdiri dari 10 angka")
-    except :
-        print("\n- Mohon perhatikan inputan")
+    nim = str(input(">>> Masukan NIM : "))
+
+    if len(nim) == 10:
+
+        if acc.cekNim(nim): #melakukan pencarian nim yang telah diinput ke database
+            print("NIM telah terdaftar")
+            return False
+        
+        else : #jika nim tidak ada dalam database maka bisa melakukan registrasi
+            nama = str(input(">>> Masukan Nama : ")).capitalize()
+            prodi = str(input(">>> Masukan Program Studi : ")).capitalize()
+
+            if 2 < len(nama) < 30 and 2 < len(prodi) < 30:
+                jeniskelamin = int(input("""
+                1. Perempuan
+                2. Laki-laki
+                Pilih jenis kelamin anda : """))
+                if jeniskelamin == 1:
+                    jeniskelamin = "Perempuan"
+                elif jeniskelamin == 2:
+
+                    jeniskelamin = "Laki-laki"
+                pasw = str(input("\n>>> Masukan Password : "))
+
+                acc.registrasi(nim,nama,prodi,jeniskelamin,pasw) #melakukan proses penambahan data regis ke database
+                print("Registrasi berhasil")
+                return True
+            else :
+                print("\n- Panjang karakter nama dan prodi harus diantara 2-30")
+    else :
+        print("\n- NIM harus terdiri dari 10 angka")
 
 def loginMahasiswa(): 
     global nim_mhs
     nim_mhs = str(input(">>> Masukan NIM : "))
     password = str(input(">>> Masukan Password : "))
+
     if acc.login(user.find_nim(nim_mhs),password): #melakukan pencarian nim dan password didatabase
         os.system('cls')
         print("Login berhasil")
-        print("Halo",user.find_nim(nim_mhs).get("nama"))
+        print("Halo",user.find_nim(nim_mhs).get("nama")) #mencari nama user berdasarkan nim
         time.sleep(3)
         return True #jika user ditemukan
+    
     else :
         return False #jika user tidak ditemukan/password salah
    
@@ -57,6 +62,7 @@ def profilMhs(): #menampilkan profil mahasiswa
 
 def formPeminjamanMhs(kode, tanggal_p, tanggal_s):
     try :
+        #mengambil data nim,nama, dan prodi mahasiswa dari database
         nim = user.find_nim(nim_mhs).get("nim")
         nama = user.find_nim(nim_mhs).get("nama")
         prodi = user.find_nim(nim_mhs).get("prodi")
@@ -64,14 +70,16 @@ def formPeminjamanMhs(kode, tanggal_p, tanggal_s):
         while True :
             mk = str(input(">>> Mata kuliah : ")).capitalize()
             keperluan = str(input(">>> Keperluan : ")).capitalize()
+
             if 2 < len(mk) < 30 and 2 < len(keperluan) < 30:
                 break
             else:
                 print("\n- Panjang karakter mata kuliah dan keperluan harus diantara 2-30")
         
-        if mk.isnumeric() or keperluan.isnumeric():
+        if mk.isnumeric() or keperluan.isnumeric(): #jika tipenya berupa angka
             print("\n- Input tidak boleh angka")
-        elif mk == "" or keperluan == "":
+
+        elif mk == "" or keperluan == "": #jika inputan kosong
             print("\n- Input tidak boleh kosong")
         else :
             status = "Pending"
@@ -87,11 +95,13 @@ def readPeminjaman(): #melihat data peminjaman yang telah dilakukan
 def searchKodeKelas() :
     try :
         search = input("Masukkan Kode Kelas yang ingin dicari : ").capitalize()
-        temp_data = ll.searchKelas(search)
-        if temp_data == False:
+        temp_data = ll.searchKelas(search) #proses pencarian data
+
+        if temp_data == False: #jika pencarian false
             print("\n- Kode kelas tidak ditemukan!")
+
         else:
-            ll.hasilSearchKodekelas(temp_data)
+            ll.hasilSearchKodekelas(temp_data) #jika ditemukan maka akan menampilkan hasil pencariannya
     except:
         print("\n- Mohon perhatikan inputan")
 
@@ -118,7 +128,7 @@ def pilihLogin():
     3. EXIT
 ✿   ✿   ✿   ✿   ✿   ✿\n""")
 
-def MenuMahasiswa():
+def MenuMahasiswa(): #menjalankan menu-menu mahasiswa
     os.system('cls')
     while True:
         try :
@@ -167,6 +177,8 @@ def MenuMahasiswa():
             elif pil == 2:
                 os.system('cls')
                 if registrasiMahasiswa():
+                    time.sleep(3)
+                    os.system('cls')
                     pass
                 else :
                     time.sleep(3)

@@ -17,7 +17,7 @@ class User(Database):
         nip_f = self.akun_collection.find_one({"nip" : nip})
         return nip_f
 
-    def id_peminjaman(self): #membuat id peminjaman
+    def id_peminjaman(self): #membuat dan menambahkan id peminjaman
         no = randint(1000,9999)
         return no
     

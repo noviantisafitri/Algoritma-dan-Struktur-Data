@@ -1,8 +1,7 @@
 from pymongo import MongoClient
 
-
-class Database:
-    def __init__(self):
+class Database: 
+    def __init__(self): #koneksi ke database
 
         client = MongoClient("mongodb://novianti:Ah7iRtN5AFbSnkYMLhDEgjAFeR5XxjQMCidRSQhE@sandbox-shard-00-00.u1rbk.mongodb.net:27017/?ssl=true")
         database = client["room_reserve"]

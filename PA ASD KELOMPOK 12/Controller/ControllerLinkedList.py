@@ -35,7 +35,7 @@ class LinkedList (Database):
     def displayData(self, data = ""):
         #menampilkan data dalam node
         self.refresh()
-        tabel= PrettyTable(['ID','Kode','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Tanggal Pinjam', 'Tanggal Selesai', 'Status', 'Keterangan'])
+        tabel= PrettyTable(['ID','Kelas','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Tanggal Pinjam', 'Tanggal Selesai', 'Status', 'Keterangan'])
 
         if(data == ""):
             if self.head is None :
@@ -57,11 +57,11 @@ class LinkedList (Database):
         print(tabel)
 
     def hasilSearchKodekelas(self, data):
-        tabel= PrettyTable(['ID','Kode','Tanggal Pinjam', 'Tanggal Selesai'])
+        tabel= PrettyTable(['ID','Kelas','Tanggal Pinjam', 'Tanggal Selesai'])
         for i in range(len(data)):
             tabel.add_row([data[i][0], data[i][1], data[i][7], data[i][8]])
         print(tabel)
-        
+    
     def fibonacci_search(self, arr, x):
         # Mengurutkan elemen-elemen array secara ascending
         arr = sorted(arr)
@@ -77,15 +77,15 @@ class LinkedList (Database):
             fib = fib1 + fib2
 
         # Inisialisasi variabel pencarian
-       i = 0
-       mid = 0
-       n = len(arr)
+        i = 0
+        mid = 0
+        n = len(arr)
 
-       # Melakukan pencarian menggunakan algoritma fibonacci search
-       while fib > 0:
-        # Menentukan indeks tengah
-        mid = min(i+fib2, n-1)
-        
+        # Melakukan pencarian menggunakan algoritma fibonacci search
+        while fib > 0:
+            # Menentukan indeks tengah
+            mid = min(i+fib2, n-1)
+            
         # Jika elemen pada indeks tengah adalah sebuah sublist, lakukan pencarian secara linier pada sublist
         if isinstance(arr[mid], list):
             sub_arr = arr[mid]
@@ -123,7 +123,7 @@ class LinkedList (Database):
                 fib1 = fib1 - fib2
                 fib2 = fib - fib1
 
-    # Jika elemen pada indeks i adalah sebuah sublist, lakukan pencarian secara linier pada sublist
+        # Jika elemen pada indeks i adalah sebuah sublist, lakukan pencarian secara linier pada sublist
         if isinstance(arr[i], list):
             sub_arr = arr[i]
             found = False
@@ -135,23 +135,21 @@ class LinkedList (Database):
                 return i, sub_arr.index(x)
             else:
                 return -1, -1
-    # Jika elemen pada indeks i bukan sublist, lakukan pencarian langsung pada elemen pada indeks i
+        # Jika elemen pada indeks i bukan sublist, lakukan pencarian langsung pada elemen pada indeks i
         else:
             if type(arr[i]) == type(x) and arr[i] == x:
                 return i, 0
             else:
                 return -1, -1
 
-
-    def searchKelas(self):
+    def searchKelas(self, search):
         self.refresh()
         list_nodes = []
         temp_list = []
-        cursor = self.convertArray()
+        cursor = self.convertData()
         for data in cursor:
             list_nodes.append(data["kode"])
             temp_list.append(data)
-        search = input("Masukkan Kode Kelas yang ingin dicari: ").capitalize()
         searching = self.fibonacci_search(list_nodes, search)
         if searching[0] == -1:
             return False
@@ -162,15 +160,14 @@ class LinkedList (Database):
                     list_nodes.append(list(x.values())[0:])
             return list_nodes
 
-    def searchNIM(self):
+    def searchNIM(self, search):
         self.refresh()
         list_nodes = []
         temp_list = []
-        cursor = self.convertArray()
+        cursor = self.convertData()
         for data in cursor:
             list_nodes.append(data["nim"])
             temp_list.append(data)
-        search = input("Masukkan NIM yang ingin dicari: ")
         searching = self.fibonacci_search(list_nodes, search)
         if searching[0] == -1:
             return False
@@ -181,7 +178,7 @@ class LinkedList (Database):
                     list_nodes.append(list(x.values())[0:])
             return list_nodes
         
-    def convertArray(self):
+    def convertData(self):
         if self.head == None:
             return []
         else:
@@ -192,18 +189,9 @@ class LinkedList (Database):
                 current = current.next
             return result
 
-
-   def sort_node(self):
+    def sort_node(self,key):
         list_nodes = [] # inisialisasi list kosong untuk menyimpan data dari setiap node
         n = self.head # assign node pertama pada variabel n
-
-        label = ['ID','Kode','NIM','Nama'] # label untuk setiap kolom data
-
-        # menampilkan label untuk setiap kolom data
-        for i in range(len(label)):
-            print('{n}. {lbl}'.format(n = i, lbl = label[i]))
-        
-        key = int(input("Pilih salah satu key: ")) # input dari user untuk memilih key sorting
 
         # mengambil data dari setiap node dan memasukkannya ke dalam list_nodes
         while n is not None:
@@ -230,8 +218,6 @@ class LinkedList (Database):
         
         return node
 
-        
-
     def partition(self, node, first, last, key):
         pivot = node[first][key]
         batas = first + 1
@@ -243,3 +229,4 @@ class LinkedList (Database):
 
         node[batas-1], node[first] = node[first], node[batas-1]
         return batas
+    

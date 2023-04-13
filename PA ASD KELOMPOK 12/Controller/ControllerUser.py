@@ -52,16 +52,18 @@ class User(Database):
             tambah = self.data_collection.find({"nim" : nim})#melakukan pencarian nim 
 
             for i in tambah: #melakukan perulangan dan mengambil data yang sesuai dengan nim
-                data["no"].append(i["no"])
-                data["kode"].append(i["kode"])
-                data["nim"].append(i["nim"])
-                data["nama"].append(i["nama"])
-                data["prodi"].append(i["prodi"])
-                data["mk"].append(i["mk"])
-                data["keperluan"].append(i["keperluan"])
-                data["status"].append(i["status"])
-                data["tanggalp"].append(i["tanggalp"])
-                data["tanggals"].append(i["tanggals"])
+
+                if i["ket"] == "Digunakan":
+                    data["no"].append(i["no"])
+                    data["kode"].append(i["kode"])
+                    data["nim"].append(i["nim"])
+                    data["nama"].append(i["nama"])
+                    data["prodi"].append(i["prodi"])
+                    data["mk"].append(i["mk"])
+                    data["keperluan"].append(i["keperluan"])
+                    data["status"].append(i["status"])
+                    data["tanggalp"].append(i["tanggalp"])
+                    data["tanggals"].append(i["tanggals"])
 
             tabel= PrettyTable(['No','Kelas','NIM','Nama', 'Program Studi', 'Mata Kuliah','Keperluan', 'Status', 'Tanggal Pinjam', 'Tanggal Selesai'])
             for i in range(len(data["kode"])):
@@ -103,4 +105,4 @@ class User(Database):
         "status" : status,
         "ket" : "Digunakan"}
         self.data_collection.insert_one(data)
-        print("\nPeminjaman berhasil ditambahkan")
+        print("\n---PEMINJAMAN BERHASIL DITAMBAHKAN---")

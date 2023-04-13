@@ -46,55 +46,62 @@ def addPeminjaman(nip = ""): #menambahkan data peminjaman ruang
                                                                 #maka tidak bisa dilakukan peminjaman
             
             else : #jika tanggal peminjaman telah sesuai
+                hari = timedelta(days=30) #waktu maks pengajuan peminjaman
+                hari_p = tanggal_p - datetime.now()
 
-                tanggal_selesai = input(">>> Masukkan tanggal selesai (dd/mm/yyyy): ")
-                time2 = input("    > Masukkan waktu (hh:mm:ss): ")
-                tanggal_s = datetime.strptime(f"{tanggal_selesai} {time2}", "%d/%m/%Y %H:%M:%S")
+                if hari_p > hari: #jika waktu peminjaman untuk lebih dari 30 hari kedepan
+                    print("\n- Peminjaman hanya untuk maksimal 30 hari kedepan")
 
-                waktu_p = timedelta(hours=1) #waktu minimum peminjaman
-                jam_p = tanggal_s - tanggal_p #melakukan perhitungan jam peminjaman
+                else : #jika waktu pengajuan peminjaman kurang dari 30 hari kedepan
+                    tanggal_selesai = input(">>> Masukkan tanggal selesai (dd/mm/yyyy): ")
+                    time2 = input("    > Masukkan waktu (hh:mm:ss): ")
+                    tanggal_s = datetime.strptime(f"{tanggal_selesai} {time2}", "%d/%m/%Y %H:%M:%S")
 
-                if tanggal_s < tanggal_p : #jika tanggal selesai tidak sesuai atau kurang dari tanggal peminjaman
-                    print("\n- Peminjaman tidak dapat diproses karena tanggal tidak sesuai")
-               
-                else :
-                    if jam_p >= waktu_p : #jika jam peminjaman lebih dari 1 jam
+                    waktu_p = timedelta(hours=1) #waktu minimum peminjaman
+                    jam_p = tanggal_s - tanggal_p #melakukan perhitungan jam peminjaman
 
-                        if user.find_data(kode): #jika kode kelas ditemukan dalam database
-
-                            for i in user.find_kelas(kode): #melakukan pencarian data pada kode kelas yang sama
-                                    
-                                if i["ket"] == "Digunakan" : #jika ket pada setiap kode kelas "Digunakan" maka akan melakukan pencocokan pada tanggal peminjaman 
+                    if tanggal_s < tanggal_p : #jika tanggal selesai tidak sesuai atau kurang dari tanggal peminjaman
+                        print("\n- Peminjaman tidak dapat diproses karena tanggal tidak sesuai")
                 
-                                    if tanggal_p > i["tanggals"] or tanggal_s < i["tanggalp"]: #melakukan pengecekan pada tanggal peminjaman dan selesai
-                                        if nip == "": 
-                                            formDataPeminjaman(kode, tanggal_p, tanggal_s) #fungsi untuk melakukan isi data peminjaman oleh admin
-                                            break
-                                        else:
-                                            Mahasiswa.formPeminjamanMhs(kode, tanggal_p, tanggal_s) #fungsi untuk melakukan isi data peminjaman oleh mahasiswa
-                                            break
-                                    else :
-                                        print("\n- Mohon maaf kelas sedang digunakan") #jika waktu peminjaman yang diinputkan bertabrakan dengan 
-                                                                                       #peminjaman yang telah ada didatabase     
-                                
-                                else : #jika status kelas didatabase adalah "Selesai"
-                                
-                                    if nip == "":
-                                        formDataPeminjaman(kode, tanggal_p, tanggal_s)             
-                                        break
-                                    else :
-                                        Mahasiswa.formPeminjamanMhs(kode, tanggal_p, tanggal_s)
-                                        break  
+                    else :
 
-                        else : #jika kode kelas tidak ada didatabase/belum ada peminjaman
-                            if nip == "":
-                                formDataPeminjaman(kode, tanggal_p, tanggal_s)             
-                                            
-                            else :
-                                Mahasiswa.formPeminjamanMhs(kode, tanggal_p, tanggal_s)
-                            
-                    else : #jika jam peminjaman < 1 jam
-                        print("\n- Waktu minimal peminjaman ruang adalah 1 jam")                  
+                        if jam_p >= waktu_p : #jika jam peminjaman lebih dari 1 jam
+
+                            if user.find_data(kode): #jika kode kelas ditemukan dalam database
+
+                                for i in user.find_kelas(kode): #melakukan pencarian data pada kode kelas yang sama
+                                        
+                                    if i["ket"] == "Digunakan" : #jika ket pada setiap kode kelas "Digunakan" maka akan melakukan pencocokan pada tanggal peminjaman 
+                    
+                                        if tanggal_p > i["tanggals"] or tanggal_s < i["tanggalp"]: #melakukan pengecekan pada tanggal peminjaman dan selesai
+                                            if nip == "": 
+                                                formDataPeminjaman(kode, tanggal_p, tanggal_s) #fungsi untuk melakukan isi data peminjaman oleh admin
+                                                break
+                                            else:
+                                                Mahasiswa.formPeminjamanMhs(kode, tanggal_p, tanggal_s) #fungsi untuk melakukan isi data peminjaman oleh mahasiswa
+                                                break
+                                        else :
+                                            print("\n- Mohon maaf kelas sedang digunakan") #jika waktu peminjaman yang diinputkan bertabrakan dengan 
+                                                                                        #peminjaman yang telah ada didatabase     
+                                    
+                                    else : #jika status kelas didatabase adalah "Selesai"
+                                    
+                                        if nip == "":
+                                            formDataPeminjaman(kode, tanggal_p, tanggal_s)             
+                                            break
+                                        else :
+                                            Mahasiswa.formPeminjamanMhs(kode, tanggal_p, tanggal_s)
+                                            break  
+
+                            else : #jika kode kelas tidak ada didatabase/belum ada peminjaman
+                                if nip == "":
+                                    formDataPeminjaman(kode, tanggal_p, tanggal_s)             
+                                                
+                                else :
+                                    Mahasiswa.formPeminjamanMhs(kode, tanggal_p, tanggal_s)
+                                
+                        else : #jika jam peminjaman < 1 jam
+                            print("\n- Waktu minimal peminjaman ruang adalah 1 jam")                  
         else :
             print("\n- Kode kelas tidak ditemukan") #jika kode kelas yang diinputkan tidak ada didalam daftar kode kelas yang tersedia
     
@@ -233,7 +240,7 @@ def sortData():
 def searchNimMhs():
     try:
         #melakukan pencarian data berdasarkan nim
-        search = input("Masukkan NIM yang ingin dicari : ") 
+        search = str(input("Masukkan NIM yang ingin dicari : "))
         temp_data = ll.searchNIM(search) #melakukan pencarian nim
 
         if temp_data == False: #jika pencariannya adalah false/tidak ditemukan

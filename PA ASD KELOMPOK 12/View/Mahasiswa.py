@@ -21,7 +21,7 @@ def registrasiMahasiswa(): #fungsi untuk membuat akun mahasiswa
         else : #jika nim tidak ada dalam database maka bisa melakukan registrasi
             nama = str(input(">>> Masukan Nama : ")).capitalize()
             prodi = str(input(">>> Masukan Program Studi : ")).capitalize()
-
+            
             if 2 < len(nama) < 30 and 2 < len(prodi) < 30:
                 jeniskelamin = int(input("""
                 1. Perempuan

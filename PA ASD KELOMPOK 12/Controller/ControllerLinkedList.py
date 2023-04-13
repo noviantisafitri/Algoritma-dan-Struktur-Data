@@ -65,6 +65,7 @@ class LinkedList (Database):
     def fibonacci_search(self, arr, x):
         # Mengurutkan elemen-elemen array secara ascending
         arr = sorted(arr)
+        print("ini sort arr",arr)
         # Inisialisasi nilai awal bilangan fibonacci
         fib2 = 0
         fib1 = 1
@@ -86,97 +87,109 @@ class LinkedList (Database):
             # Menentukan indeks tengah
             mid = min(i+fib2, n-1)
             
-        # Jika elemen pada indeks tengah adalah sebuah sublist, lakukan pencarian secara linier pada sublist
-        if isinstance(arr[mid], list):
-            sub_arr = arr[mid]
-            found = False
-            for element in sub_arr:
-                if type(element) == type(x) and element == x:
-                    found = True
-                    break
-            if found:
-                return mid, sub_arr.index(x)
-            # Jika elemen terbesar dari sublist lebih kecil dari elemen yang dicari, cari di bagian kanan array
-            elif type(sub_arr[0]) == type(x) and sub_arr[0] < x:
-                fib = fib1
-                fib1 = fib2
-                fib2 = fib - fib1
-                i = mid
-            # Jika elemen terbesar dari sublist lebih besar atau sama dengan elemen yang dicari, cari di bagian kiri array
+            # Jika elemen pada indeks tengah adalah sebuah sublist, lakukan pencarian secara linier pada sublist
+            if isinstance(arr[mid], list):
+                sub_arr = arr[mid]
+                found = False
+                for element in sub_arr:
+                    if type(element) == type(x) and element == x:
+                        found = True
+                        break
+                if found:
+                    return mid, sub_arr.index(x)
+                # Jika elemen terbesar dari sublist lebih kecil dari elemen yang dicari, cari di bagian kanan array
+                elif type(sub_arr[0]) == type(x) and sub_arr[0] < x:
+                    fib = fib1
+                    fib1 = fib2
+                    fib2 = fib - fib1
+                    i = mid
+                # Jika elemen terbesar dari sublist lebih besar atau sama dengan elemen yang dicari, cari di bagian kiri array
+                else:
+                    fib = fib2
+                    fib1 = fib1 - fib2
+                    fib2 = fib - fib1
+            # Jika elemen pada indeks tengah bukan sublist, lakukan pencarian langsung pada elemen pada indeks tengah
             else:
-                fib = fib2
-                fib1 = fib1 - fib2
-                fib2 = fib - fib1
-        # Jika elemen pada indeks tengah bukan sublist, lakukan pencarian langsung pada elemen pada indeks tengah
-        else:
-            if type(arr[mid]) == type(x) and arr[mid] == x:
-                return mid, 0
-            # Jika elemen pada indeks tengah lebih kecil dari elemen yang dicari, cari di bagian kanan array
-            elif type(arr[mid]) == type(x) and arr[mid] < x:
-                fib = fib1
-                fib1 = fib2
-                fib2 = fib - fib1
-                i = mid
-            # Jika elemen pada indeks tengah lebih besar dari elemen yang dicari, cari di bagian kiri array
-            else:
-                fib = fib2
-                fib1 = fib1 - fib2
-                fib2 = fib - fib1
+                if type(arr[mid]) == type(x) and arr[mid] == x:
+                    return mid, 0
+                # Jika elemen pada indeks tengah lebih kecil dari elemen yang dicari, cari di bagian kanan array
+                elif type(arr[mid]) == type(x) and arr[mid] < x:
+                    fib = fib1
+                    fib1 = fib2
+                    fib2 = fib - fib1
+                    i = mid
+                # Jika elemen pada indeks tengah lebih besar dari elemen yang dicari, cari di bagian kiri array
+                else:
+                    fib = fib2
+                    fib1 = fib1 - fib2
+                    fib2 = fib - fib1
 
-        # Jika elemen pada indeks i adalah sebuah sublist, lakukan pencarian secara linier pada sublist
-        if isinstance(arr[i], list):
-            sub_arr = arr[i]
-            found = False
-            for element in sub_arr:
-                if type(element) == type(x) and element == x:
-                    found = True
-                    break
-            if found:
-                return i, sub_arr.index(x)
-            else:
-                return -1, -1
-        # Jika elemen pada indeks i bukan sublist, lakukan pencarian langsung pada elemen pada indeks i
-        else:
-            if type(arr[i]) == type(x) and arr[i] == x:
-                return i, 0
-            else:
-                return -1, -1
+                # Jika elemen pada indeks i adalah sebuah sublist, lakukan pencarian secara linier pada sublist
+                if isinstance(arr[i], list):
+                    sub_arr = arr[i]
+                    found = False
+                    for element in sub_arr:
+                        if type(element) == type(x) and element == x:
+                            found = True
+                            break
+                    if found:
+                        return i, sub_arr.index(x)
+                    else:
+                        return -1, -1
+                # Jika elemen pada indeks i bukan sublist, lakukan pencarian langsung pada elemen pada indeks i
+                else:
+                    if type(arr[i]) == type(x) and arr[i] == x:
+                        return i, 0
+                    else:
+                        return -1, -1
 
     def searchKelas(self, search):
         self.refresh()
         list_nodes = []
         temp_list = []
+
         cursor = self.convertData()
         for data in cursor:
             list_nodes.append(data["kode"])
             temp_list.append(data)
-        searching = self.fibonacci_search(list_nodes, search)
-        if searching[0] == -1:
+            
+        if search not in list_nodes:
             return False
-        else:
-            list_nodes = []
-            for x in temp_list:
-                if search == x["kode"]:
-                    list_nodes.append(list(x.values())[0:])
-            return list_nodes
+        else :     
+            searching = self.fibonacci_search(list_nodes, search)
+            if searching == -1:
+                return False
+            else:
+                list_nodes = []
+                for x in temp_list:
+                    if search == x["kode"]:
+                        list_nodes.append(list(x.values())[0:])
+                return list_nodes
+        
 
     def searchNIM(self, search):
         self.refresh()
         list_nodes = []
         temp_list = []
+
         cursor = self.convertData()
         for data in cursor:
             list_nodes.append(data["nim"])
             temp_list.append(data)
-        searching = self.fibonacci_search(list_nodes, search)
-        if searching[0] == -1:
+            
+        if search not in list_nodes:
             return False
-        else:
-            list_nodes = []
-            for x in temp_list:
-                if search == x["nim"]:
-                    list_nodes.append(list(x.values())[0:])
-            return list_nodes
+        else :     
+            searching = self.fibonacci_search(list_nodes, search)
+            if searching == -1:
+                return False
+            else:
+                list_nodes = []
+                for x in temp_list:
+                    if search == x["nim"]:
+                        list_nodes.append(list(x.values())[0:])
+                return list_nodes
+
         
     def convertData(self):
         if self.head == None:
@@ -185,7 +198,7 @@ class LinkedList (Database):
             current = self.head
             result = []
             while current != None:
-                result.append(current.data)
+                result.append(current.data) #menambahkan data kedalam list
                 current = current.next
             return result
 
